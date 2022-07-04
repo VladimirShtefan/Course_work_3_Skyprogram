@@ -468,6 +468,19 @@ textarea {
 	outline: none
 }
 
+.add_post__input {
+	display: block;
+	width: 100%;
+	padding: 18px 18px 16px;
+	background: white;
+	border-radius: 6px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.25)
+	box-shadow: none;
+	outline: none;
+	resize: none;
+	margin-bottom: 20px;
+}
+
 .search__results {
 	padding-top: 20px;
 	text-align: center;
@@ -504,5 +517,14 @@ textarea {
 	opacity: 0.75
 }
 
+.warning {
+    color : red;
+    list-style-type : None;
+}
+
+
+*, ::after, ::before {
+    box-sizing: initial;
+}
 
 /*# sourceMappingURL=styles.min.css.map */

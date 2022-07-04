@@ -1,0 +1,25 @@
+[
+    {
+        "user_md5": "c0d52266ffc9db1223f972b4a9a913bc",
+        "pk_posts_with_like": [
+            4,
+            7
+        ],
+        "pk_posts_in_bookmarks": [],
+        "pk": 1
+    },
+    {
+        "user_md5": "5593e73412ea8cf3eea816489ab52f2f",
+        "pk_posts_with_like": [
+            8
+        ],
+        "pk_posts_in_bookmarks": [],
+        "pk": 2
+    },
+    {
+        "user_md5": "afb2e0386575964a84952b94e1821797",
+        "pk_posts_with_like": [],
+        "pk_posts_in_bookmarks": [],
+        "pk": 3
+    }
+]
