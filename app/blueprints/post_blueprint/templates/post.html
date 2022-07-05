@@ -29,6 +29,15 @@
   <main class="container">
     <section class="items">
       <div class="items__item item item--post">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class=flashes style="padding-left: 0;">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+          {% endwith %}
 
         <div class="item__top">
           <a href="{{ url_for('post_blueprint.user_posts_page', username=post.poster_name) }}" class="item__head">
@@ -37,9 +46,19 @@
             </div>
             <span class="item__username">{{ post.poster_name }}</span>
           </a>
-            <button type="button" class="item__bookmark-btn">
-                <img src="/img/bookmark.png" alt="" class="item__bookmark-icon"  width="24">
-            </button>
+            {% if post.pk in bookmarks_list %}
+                <form action="{{ url_for('post_blueprint.get_bookmark', bookmark='remove', post_id=post.pk) }}" method="post">
+                  <button type="submit" class="item__bookmark-btn:hover">
+                     <img src="/img/bookmark.png" alt="" class="item__bookmark-icon"  width="24">
+                  </button>
+                </form>
+            {% else %}
+                <form action="{{ url_for('post_blueprint.get_bookmark', bookmark='add', post_id=post.pk) }}" method="post">
+                  <button type="submit" class="item__bookmark-btn">
+                     <img src="/img/bookmark.png" alt="" class="item__bookmark-icon"  width="24">
+                  </button>
+                </form>
+            {% endif %}
         </div>
 
         <a href="{{ url_for('post_blueprint.post_page', post_id=post.pk) }}" class="item__post-link">
@@ -48,7 +67,7 @@
 
         <div class="item__descr">
           <p class="item__text">
-            {{ post.content }}
+            {{ post.content|safe }}
           </p>
         </div>
 
@@ -108,16 +127,6 @@
              </label>
              <button type="submit" style="background-color: black; color: white">Отправить</button>
           </form>
-
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul class=flashes style="padding-left: 0;">
-                    {% for category, message in messages %}
-                        <li class="{{ category }}">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-          {% endwith %}
           </div>
         </div>
 

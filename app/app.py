@@ -12,7 +12,8 @@ app = Flask(__name__, static_url_path='', static_folder=STATIC_PATH)
 app.register_blueprint(post_blueprint)
 
 dotenv.load_dotenv(override=True)
-if environ.get('APP_SETTINGS') == 'development':
+
+if environ.get('FLASK_ENV') == 'development':
     app.config.from_pyfile(DEV_CONFIG_FILE_PATH)
     app.config['SECRET_KEY'] = 'super-secret-key'
 else:

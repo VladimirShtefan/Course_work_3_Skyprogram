@@ -36,6 +36,10 @@ class File:
         with open(self.comments_file, 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
 
+    def update_posts(self, data: list[dict]):
+        with open(self.path_file, 'w', encoding='utf-8') as file:
+            json.dump(data, file, indent=4, ensure_ascii=False)
+
 
 class Post(File):
     def get_number_comments_with_post_id(self) -> dict:
@@ -56,10 +60,25 @@ class Post(File):
         for post in posts:
             try:
                 if post['pk'] == pk:
+                    words: list = post['content'].split(' ')
+                    for index, word in enumerate(words):
+                        if word.startswith('#'):
+                            hashtag = word.replace('#', '')
+                            word = f'<a href="/tag/{hashtag}">{word}</a>'
+                            words[index] = word
+                    post['content'] = ' '.join(words)
                     return post
             except KeyError:
                 raise DictKeyNotFoundError()
         raise PageNotFoundError()
+
+    def get_bookmark_posts(self, bookmark_list: list) -> list[dict]:
+        posts = self.get_all_posts()
+        bookmark_posts = []
+        for post in posts:
+            if post['pk'] in bookmark_list:
+                bookmark_posts.append(post)
+        return bookmark_posts
 
     def get_comments_for_post_by_pk(self, pk: int) -> list[dict]:
         comments = self.get_all_comments()
@@ -80,6 +99,22 @@ class Post(File):
                             "pk": len(all_comments) + 1
                             })
         self.write_comments(all_comments)
+
+    def update_likes_post(self, post_id, like: str):
+        posts = self.get_all_posts()
+        for post in posts:
+            if post["pk"] == post_id and like == 'like':
+                post['likes_count'] += 1
+            elif post["pk"] == post_id and like == 'dislike':
+                post['likes_count'] -= 1
+        self.update_posts(posts)
+
+    def update_views_post(self, post_id: int):
+        posts = self.get_all_posts()
+        for post in posts:
+            if post["pk"] == post_id:
+                post['views_count'] += 1
+        self.update_posts(posts)
 
 
 class User(Post):
@@ -120,7 +155,7 @@ class UserDetect:
         all_users = self.load_users()
         return [user['user_md5'] for user in all_users]
 
-    def add_new_user(self, post_id: int = None, like: str = None, bookmark: str = None):
+    def add_new_user(self):
         users_md5 = self.get_all_users_md5()
         user_md5 = self.get_md5_for_user()
         users: list[dict] = self.load_users()
@@ -133,22 +168,36 @@ class UserDetect:
             }
             users.append(user_data)
             self.write_user(users)
-        else:
-            for user in users:
-                if user['user_md5'] == user_md5:
-                    if like == 'like':
-                        temp_list = user['pk_posts_with_like']
-                        temp_list.append(post_id)
-                        user['pk_posts_with_like'] = list(set(temp_list))
-                    if bookmark == 'mark':
-                        temp_list = user['pk_posts_in_bookmarks']
-                        temp_list.append(post_id)
-                        user['pk_posts_in_bookmarks'] = list(set(temp_list))
-                    if like == 'dislike':
-                        temp_list = user['pk_posts_with_like']
-                        temp_list.remove(post_id)
-                        user['pk_posts_with_like'] = list(set(temp_list))
-                    self.write_user(users)
+
+    def get_like(self, post_id: int = None, like: str = None):
+        user_md5 = self.get_md5_for_user()
+        users: list[dict] = self.load_users()
+        for user in users:
+            if user['user_md5'] == user_md5:
+                if like == 'like':
+                    temp_list = user['pk_posts_with_like']
+                    temp_list.append(post_id)
+                    user['pk_posts_with_like'] = list(set(temp_list))
+                elif like == 'dislike':
+                    temp_list = user['pk_posts_with_like']
+                    temp_list.remove(post_id)
+                    user['pk_posts_with_like'] = list(set(temp_list))
+                self.write_user(users)
+
+    def get_bookmark(self, post_id: int = None, bookmark: str = None):
+        user_md5 = self.get_md5_for_user()
+        users: list[dict] = self.load_users()
+        for user in users:
+            if user['user_md5'] == user_md5:
+                if bookmark == 'add':
+                    temp_list = user['pk_posts_in_bookmarks']
+                    temp_list.append(post_id)
+                    user['pk_posts_in_bookmarks'] = list(set(temp_list))
+                elif bookmark == 'remove':
+                    temp_list = user['pk_posts_in_bookmarks']
+                    temp_list.remove(post_id)
+                    user['pk_posts_in_bookmarks'] = list(set(temp_list))
+                self.write_user(users)
 
     def get_likes_list(self):
         users_md5 = self.get_all_users_md5()
@@ -159,3 +208,11 @@ class UserDetect:
                 if user['user_md5'] == user_md5:
                     return user["pk_posts_with_like"]
 
+    def get_bookmarks_list(self):
+        users_md5 = self.get_all_users_md5()
+        user_md5 = self.get_md5_for_user()
+        users: list[dict] = self.load_users()
+        if user_md5 in users_md5:
+            for user in users:
+                if user['user_md5'] == user_md5:
+                    return user["pk_posts_in_bookmarks"]

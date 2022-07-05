@@ -42,12 +42,22 @@
             <a href="{{ url_for('post_blueprint.post_page', post_id=post.pk) }}" class="item__post-link">
               <img src="{{ post.pic }}" alt="" width="348" class="item__post-img">
             </a>
-            <p class="item__descr"><a href="/tag.html" class="item__tag">#food</a>{{ post.content[:50] }}...</p>
+            <p class="item__descr">{{ post.content[:50] }}...</p>
             <div class="item__post-bottom">
                 <a href="{{ url_for('post_blueprint.post_page', post_id=post.pk) }}" class="item__btn-more">Подробнее</a>
-                <button type="button" class="item__bookmark-btn">
-                    <img src="/img/bookmark.png" alt="" class="item__bookmark-icon" width="24">
-                </button>
+              {% if post.pk in bookmarks_list %}
+                <form action="{{ url_for('post_blueprint.get_bookmark', bookmark='remove', post_id=post.pk) }}" method="post">
+                  <button type="submit" class="item__bookmark-btn:hover">
+                     <img src="/img/bookmark.png" alt="" class="item__bookmark-icon"  width="24">
+                  </button>
+                </form>
+              {% else %}
+                <form action="{{ url_for('post_blueprint.get_bookmark', bookmark='add', post_id=post.pk) }}" method="post">
+                  <button type="submit" class="item__bookmark-btn">
+                     <img src="/img/bookmark.png" alt="" class="item__bookmark-icon"  width="24">
+                  </button>
+                </form>
+              {% endif %}
             </div>
 
             <div class="item__post-info">
