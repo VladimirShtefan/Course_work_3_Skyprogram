@@ -1,4 +1,4 @@
-from app.blueprints.post_blueprint.dao.post_dao import Post, User, File
+from app.blueprints.post_blueprint.dao.post_dao import Post, File
 from app.paths import DATA_JSON_PATH, COMMENTS_JSON_PATH
 
 import pytest
@@ -51,14 +51,14 @@ class TestPostDao:
     def test_get_post_for_pk(self, post_dao):
         post = post_dao.get_post_for_pk(1)
         assert type(post) == dict, 'не верный формат поста'
-        assert list(post.keys()) == ["poster_name",
-                                     "poster_avatar",
-                                     "pic",
-                                     "content",
-                                     "views_count",
-                                     "likes_count",
-                                     "pk"
-                                     ], 'не совпадают ключи у словаря с постами'
+        assert list(post[0].keys()) == ["poster_name",
+                                        "poster_avatar",
+                                        "pic",
+                                        "content",
+                                        "views_count",
+                                        "likes_count",
+                                        "pk"
+                                        ], 'не совпадают ключи у словаря с постами'
 
     def test_get_comments_for_post_by_pk(self, post_dao):
         comments = post_dao.get_comments_for_post_by_pk(1)

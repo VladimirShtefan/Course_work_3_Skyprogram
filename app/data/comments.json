@@ -130,5 +130,17 @@
         "commenter_name": "Евгения",
         "comment": "Круто",
         "pk": 22
+    },
+    {
+        "post_id": 8,
+        "commenter_name": "dfghj",
+        "comment": "dfghjk",
+        "pk": 23
+    },
+    {
+        "post_id": 1,
+        "commenter_name": "Лило",
+        "comment": "Ррорп",
+        "pk": 24
     }
 ]

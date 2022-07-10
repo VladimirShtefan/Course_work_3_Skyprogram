@@ -1,6 +1,7 @@
-pytest
-flask
-python-dotenv
+pytest~=7.1.2
+flask~=2.1.2
+python-dotenv~=0.20.0
 flask-paginate
 requests
 path
+Werkzeug~=2.1.2
