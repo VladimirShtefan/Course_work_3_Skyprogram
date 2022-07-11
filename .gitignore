@@ -1,1 +1,6 @@
 /venv
+.env
+.pytest_cache
+.idea
+__pycache__
+flask.log

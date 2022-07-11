@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+  {% block user_style %}{% endblock %}
+  <link href="{{ url_for('static', filename='css/styles.min.css') }}" rel="stylesheet">
+</head>
+<body>
+    <header class="container header">
+        <div class="header__wrapper">
+          {% block header %}{% endblock %}
+        </div>
+        {% block search %}{% endblock %}
+    </header>
+    <main class="container">
+    <section class="items">
+    {% block flash %}{% endblock %}
+    {% for post in posts %}
+        <div class="items__item item">
+            <div class="item__top">
+              <a href="{{ url_for('post_blueprint.user_posts_page', username=post.poster_name) }}" class="item__head">
+                <div class="item__ava-wrap">
+                  <img src="{{ post.poster_avatar }}" alt="" class="item__ava" width="47">
+                </div>
+                <span class="item__username">{{ post.poster_name }}</span>
+              </a>
+              {% block delete_bookmark scoped %}{% endblock %}
+            </div>
+            <a href="{{ url_for('post_blueprint.post_page', post_id=post.pk) }}" class="item__post-link">
+              <img src="{{ post.pic }}" alt="" width="348" class="item__post-img">
+            </a>
+            {% block content scoped %}{% endblock %}
+            <div class="item__post-bottom">
+              <a href="{{ url_for('post_blueprint.post_page', post_id=post.pk) }}" class="item__btn-more">Подробнее</a>
+              {% if post.pk in bookmarks_list %}
+                <form action="{{ url_for('post_blueprint.get_bookmark', bookmark='remove', post_id=post.pk) }}" method="post">
+                  <button type="submit" class="item__bookmark-btn:hover">
+                     <img src="/img/bookmark.png" alt="" class="item__bookmark-icon"  width="24">
+                  </button>
+                </form>
+              {% else %}
+                <form action="{{ url_for('post_blueprint.get_bookmark', bookmark='add', post_id=post.pk) }}" method="post">
+                  <button type="submit" class="item__bookmark-btn">
+                     <img src="/img/bookmark.png" alt="" class="item__bookmark-icon"  width="24">
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+            <div class="item__post-info">
+              <div class="item__comments-counter">
+                <span>
+                  {% if comments.get(post.pk) == None %}
+                      0 комментариев
+                  {% else %}
+                      {% if comments.get(post.pk)%100 > 10 and comments.get(post.pk)%100 < 15 %}
+                          {{ comments.get(post.pk) }} комментариев
+                      {% elif comments.get(post.pk)%10 == 1 %}
+                          {{ comments.get(post.pk) }} комментарий
+                      {% elif comments.get(post.pk)%10 > 1 and comments.get(post.pk)%10 < 5 %}
+                          {{ comments.get(post.pk) }} комментария
+                      {% else %}
+                          {{ comments.get(post.pk) }} комментариев
+                      {% endif %}
+                  {% endif %}
+                </span>
+              </div>
+              <div class="item__counter">
+                  <img src="/img/eye.png" alt="" class="item__counter-icon" width="26">
+                  <span class="item__counter-text">{{ post.views_count }}</span>
+              </div>
+            </div>
+            <div class="item__post-bottom">
+                {% if post.pk in likes_list %}
+                    <form action="{{ url_for('post_blueprint.get_like', post_id=post.pk, like='dislike') }}" method="post">
+                      <button type="submit" class="item__bookmark-btn:hover">
+                        <img src="/img/like.png" alt="" class="item__bookmark-icon" width="32">
+                      </button>
+                      <span class="item__counter-text">{{ post.likes_count }}</span>
+                    </form>
+                {% else %}
+                    <form action="{{ url_for('post_blueprint.get_like', post_id=post.pk, like='like') }}" method="post">
+                      <button type="submit" class="item__bookmark-btn">
+                        <img src="/img/like.png" alt="" class="item__bookmark-icon" width="32">
+                      </button>
+                      <span class="item__counter-text">{{ post.likes_count }}</span>
+                    </form>
+                {% endif %}
+            </div>
+            {% block users_comment scoped %}{% endblock %}
+        </div>
+    {% endfor %}
+    {% block pagination scoped %}{% endblock %}
+    </section>
+  </main>
+  {% block svg %}{% endblock %}
+</body>
+</html>
