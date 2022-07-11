@@ -1,63 +1,29 @@
 [
     {
-        "user_md5": "c0d52266ffc9db1223f972b4a9a913bc",
-        "pk_posts_with_like": [
-            1
-        ],
-        "pk_posts_in_bookmarks": [],
-        "pk": 1
-    },
-    {
-        "user_md5": "5593e73412ea8cf3eea816489ab52f2f",
-        "pk_posts_with_like": [
-            8
-        ],
-        "pk_posts_in_bookmarks": [],
-        "pk": 2
-    },
-    {
-        "user_md5": "afb2e0386575964a84952b94e1821797",
-        "pk_posts_with_like": [],
-        "pk_posts_in_bookmarks": [],
-        "pk": 3
-    },
-    {
-        "user_md5": "5bb592bdb3d6a038fa676af4478ed040",
-        "pk_posts_with_like": [],
-        "pk_posts_in_bookmarks": [],
-        "pk": 4
-    },
-    {
-        "user_md5": "265b89a0d66a79061e67463465a8e9ff",
-        "pk_posts_with_like": [
-            1
-        ],
-        "pk_posts_in_bookmarks": [],
-        "pk": 5
-    },
-    {
         "user_md5": "46ad4b64fefae6de458f0b5af1fb74c6",
         "pk_posts_with_like": [
             1,
-            2
-        ],
-        "pk_posts_in_bookmarks": [],
-        "pk": 6
-    },
-    {
-        "user_md5": "1b2bd5c12695f62da74b18682514652c",
-        "pk_posts_with_like": [],
-        "pk_posts_in_bookmarks": [],
-        "pk": 7
-    },
-    {
-        "user_md5": "3f80486a87a58836d6158893c079ccd8",
-        "pk_posts_with_like": [
-            1
+            2,
+            4
         ],
         "pk_posts_in_bookmarks": [
-            1
+            1,
+            5
         ],
-        "pk": 8
+        "pk": 1
+    },
+    {
+        "user_md5": "5bb592bdb3d6a038fa676af4478ed040",
+        "pk_posts_with_like": [
+            8,
+            1,
+            2,
+            4
+        ],
+        "pk_posts_in_bookmarks": [
+            2,
+            4
+        ],
+        "pk": 2
     }
 ]

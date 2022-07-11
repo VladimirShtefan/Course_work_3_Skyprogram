@@ -7,6 +7,7 @@
   <title>{% block title %}{% endblock %}</title>
   {% block user_style %}{% endblock %}
   <link href="{{ url_for('static', filename='css/styles.min.css') }}" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <header class="container header">
@@ -35,19 +36,9 @@
             {% block content scoped %}{% endblock %}
             <div class="item__post-bottom">
               <a href="{{ url_for('post_blueprint.post_page', post_id=post.pk) }}" class="item__btn-more">Подробнее</a>
-              {% if post.pk in bookmarks_list %}
-                <form action="{{ url_for('post_blueprint.get_bookmark', bookmark='remove', post_id=post.pk) }}" method="post">
-                  <button type="submit" class="item__bookmark-btn:hover">
-                     <img src="/img/bookmark.png" alt="" class="item__bookmark-icon"  width="24">
-                  </button>
-                </form>
-              {% else %}
-                <form action="{{ url_for('post_blueprint.get_bookmark', bookmark='add', post_id=post.pk) }}" method="post">
-                  <button type="submit" class="item__bookmark-btn">
-                     <img src="/img/bookmark.png" alt="" class="item__bookmark-icon"  width="24">
-                  </button>
-                </form>
-              {% endif %}
+              <button type="submit" class="{% if post.pk in bookmarks_list %}item__bookmark-btn:hover{% else %}item__bookmark-btn{% endif %}">
+                 <img src="/img/bookmark.png" alt="{{ post.pk }}" class="item__bookmark-icon"  width="24">
+              </button>
             </div>
             <div class="item__post-info">
               <div class="item__comments-counter">
@@ -73,21 +64,10 @@
               </div>
             </div>
             <div class="item__post-bottom">
-                {% if post.pk in likes_list %}
-                    <form action="{{ url_for('post_blueprint.get_like', post_id=post.pk, like='dislike') }}" method="post">
-                      <button type="submit" class="item__bookmark-btn:hover">
-                        <img src="/img/like.png" alt="" class="item__bookmark-icon" width="32">
-                      </button>
-                      <span class="item__counter-text">{{ post.likes_count }}</span>
-                    </form>
-                {% else %}
-                    <form action="{{ url_for('post_blueprint.get_like', post_id=post.pk, like='like') }}" method="post">
-                      <button type="submit" class="item__bookmark-btn">
-                        <img src="/img/like.png" alt="" class="item__bookmark-icon" width="32">
-                      </button>
-                      <span class="item__counter-text">{{ post.likes_count }}</span>
-                    </form>
-                {% endif %}
+              <button type="submit" class="{% if post.pk in likes_list %} item__bookmark-btn:hover {% else %} item__bookmark-btn {% endif %}">
+                <img src="/img/like.png" alt="{{ post.pk }}" class="item__bookmark-icon" width="32">
+              </button>
+              <span id="like{{ post.pk }}" class="item__counter-text">{{ post.likes_count }}</span>
             </div>
             {% block users_comment scoped %}{% endblock %}
         </div>
@@ -96,5 +76,40 @@
     </section>
   </main>
   {% block svg %}{% endblock %}
+  <script>
+      $(document).ready(function (){   {# определяем что страница полностью загружена для выполнения скрипта #}
+          $(`.item__bookmark-icon`).click(function (){    {# отслеживаем нажитие на класс .item__like-icon #}
+              let image = $(this);      {# объявили переменную image и записали туда элемент на который кликнули #}
+              let count_bookmark = $('.header__bookmark-counter');
+              let postId = image.attr('alt');  {# получили содержимое alt от элемента на который кликнули #}
+              let parent_button = image.parent('button'); {# получили у родителя элемента на который кликнули всю информацию по тегу button #}
+              let image_type = image.attr('src');
+              let likes_counter = document.getElementById('like'+postId);
+              console.log(likes_counter.textContent)
+              $.ajax({
+                  type: "POST",
+                  url: "{{ url_for('post_blueprint.get_like_and_bookmark') }}",
+                  data: {
+                      post_id: postId,
+                      element: image_type
+                  },
+                  success: function (data) {
+                      let status = data['status'];
+                      let bookmark_list = data['bookmark_list'];
+                      let likes_count = data['likes_count'];
+                      if (status == 'enable') {
+                          count_bookmark.text(bookmark_list);
+                          parent_button.attr('class', 'item__bookmark-btn:hover');
+                          likes_counter.textContent = likes_count;
+                      } else if (status == 'disable'){
+                          count_bookmark.text(bookmark_list);
+                          parent_button.attr('class', 'item__bookmark-btn');
+                          likes_counter.textContent = likes_count;
+                      }
+                  }
+              });
+          })
+      });
+  </script>
 </body>
 </html>

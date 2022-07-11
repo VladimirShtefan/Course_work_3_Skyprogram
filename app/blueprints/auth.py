@@ -51,35 +51,41 @@ class UserDetect:
             users.append(user_data)
             self.write_user(users)
 
-    def get_like(self, post_id: int = None, like: str = None):
+    def get_like(self, post_id: int = None) -> str:
         user_md5 = self.get_md5_for_user()
         users: list[dict] = self.load_users()
         for user in users:
             if user['user_md5'] == user_md5:
-                if like == 'like':
-                    temp_list = user['pk_posts_with_like']
-                    temp_list.append(post_id)
-                    user['pk_posts_with_like'] = list(set(temp_list))
-                elif like == 'dislike':
+                if post_id in user['pk_posts_with_like']:
                     temp_list = user['pk_posts_with_like']
                     temp_list.remove(post_id)
                     user['pk_posts_with_like'] = list(set(temp_list))
-                self.write_user(users)
+                    self.write_user(users)
+                    return 'disable'
+                else:
+                    temp_list = user['pk_posts_with_like']
+                    temp_list.append(post_id)
+                    user['pk_posts_with_like'] = list(set(temp_list))
+                    self.write_user(users)
+                    return 'enable'
 
-    def get_bookmark(self, post_id: int = None, bookmark: str = None):
+    def get_bookmark(self, post_id: int = None) -> str:
         user_md5 = self.get_md5_for_user()
         users: list[dict] = self.load_users()
         for user in users:
             if user['user_md5'] == user_md5:
-                if bookmark == 'add':
-                    temp_list = user['pk_posts_in_bookmarks']
-                    temp_list.append(post_id)
-                    user['pk_posts_in_bookmarks'] = list(set(temp_list))
-                elif bookmark == 'remove':
+                if post_id in user['pk_posts_in_bookmarks']:
                     temp_list = user['pk_posts_in_bookmarks']
                     temp_list.remove(post_id)
                     user['pk_posts_in_bookmarks'] = list(set(temp_list))
-                self.write_user(users)
+                    self.write_user(users)
+                    return 'disable'
+                else:
+                    temp_list = user['pk_posts_in_bookmarks']
+                    temp_list.append(post_id)
+                    user['pk_posts_in_bookmarks'] = list(set(temp_list))
+                    self.write_user(users)
+                    return 'enable'
 
     def get_likes_list(self):
         users_md5 = self.get_all_users_md5()
@@ -90,7 +96,7 @@ class UserDetect:
                 if user['user_md5'] == user_md5:
                     return user["pk_posts_with_like"]
 
-    def get_bookmarks_list(self):
+    def get_bookmarks_list(self) -> list:
         users_md5 = self.get_all_users_md5()
         user_md5 = self.get_md5_for_user()
         users: list[dict] = self.load_users()

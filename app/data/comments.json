@@ -142,5 +142,11 @@
         "commenter_name": "Лило",
         "comment": "Ррорп",
         "pk": 24
+    },
+    {
+        "post_id": 1,
+        "commenter_name": "sdfghjk",
+        "comment": "dsfghj",
+        "pk": 25
     }
 ]
