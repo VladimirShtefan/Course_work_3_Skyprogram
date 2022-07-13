@@ -57,17 +57,6 @@ def post_page(post_id: int):
                                likes_list=likes_list, bookmarks_list=bookmarks_list)
 
 
-# @post_blueprint.route('/posts/<int:post_id>/<string:like>/', methods=['POST'])
-# def get_like(post_id: int, like: str):
-#     user = UserDetect(request.headers, request.remote_addr, USERS_JSON_PATH)
-#     user.add_new_user()
-#     user.get_like(post_id)
-#
-#     posts = Post(DATA_JSON_PATH, COMMENTS_JSON_PATH)
-#     posts.update_likes_post(post_id, like)
-#     return redirect(request.referrer)
-
-
 @post_blueprint.route('/posts/bookmarks/', methods=['GET', 'POST'])
 def bookmark_page():
     user = UserDetect(request.headers, request.remote_addr, USERS_JSON_PATH)
@@ -135,7 +124,7 @@ def user_posts_page(username: str):
 
 @post_blueprint.route('/api/posts', methods=['GET'])
 def api_get_all_posts_page():
-    logger.info(f'Запрос /api/posts/')
+    logger.info('Запрос /api/posts/')
     posts = Post(DATA_JSON_PATH, COMMENTS_JSON_PATH)
     all_posts: list[dict] = posts.get_all_posts()
     return jsonify(all_posts)
@@ -192,9 +181,9 @@ def get_like_and_bookmark():
         bookmarks_list = user.get_bookmarks_list()
     elif method == 'like':
         status = user.get_like(post_id)
-        if status == 'enable':
+        if status:
             likes_count = posts.update_likes_post(post_id, 'like')
-        elif status == 'disable':
+        else:
             likes_count = posts.update_likes_post(post_id, 'dislike')
     return jsonify({'status': status,
                     'bookmark_list': len(bookmarks_list),

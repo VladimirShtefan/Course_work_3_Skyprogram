@@ -5,3 +5,5 @@ flask-paginate
 requests
 path
 Werkzeug~=2.1.2
+flake8
+coverage

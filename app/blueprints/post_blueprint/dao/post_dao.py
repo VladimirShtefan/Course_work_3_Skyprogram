@@ -61,7 +61,7 @@ class Post(File):
         })
         self.write_comments(all_comments)
 
-    def update_likes_post(self, post_id, like: str = None):
+    def update_likes_post(self, post_id, like: str = None) -> int:
         posts = self.get_all_posts()
         for post in posts:
             if post["pk"] == post_id and like == 'like':

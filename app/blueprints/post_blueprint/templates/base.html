@@ -85,7 +85,6 @@
               let parent_button = image.parent('button'); {# получили у родителя элемента на который кликнули всю информацию по тегу button #}
               let image_type = image.attr('src');
               let likes_counter = document.getElementById('like'+postId);
-              console.log(likes_counter.textContent)
               $.ajax({
                   type: "POST",
                   url: "{{ url_for('post_blueprint.get_like_and_bookmark') }}",
@@ -97,11 +96,11 @@
                       let status = data['status'];
                       let bookmark_list = data['bookmark_list'];
                       let likes_count = data['likes_count'];
-                      if (status == 'enable') {
+                      if (status) {
                           count_bookmark.text(bookmark_list);
                           parent_button.attr('class', 'item__bookmark-btn:hover');
                           likes_counter.textContent = likes_count;
-                      } else if (status == 'disable'){
+                      } else {
                           count_bookmark.text(bookmark_list);
                           parent_button.attr('class', 'item__bookmark-btn');
                           likes_counter.textContent = likes_count;

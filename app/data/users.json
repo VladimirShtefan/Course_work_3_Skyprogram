@@ -1,29 +1,8 @@
 [
     {
-        "user_md5": "46ad4b64fefae6de458f0b5af1fb74c6",
-        "pk_posts_with_like": [
-            1,
-            2,
-            4
-        ],
-        "pk_posts_in_bookmarks": [
-            1,
-            5
-        ],
+        "user_md5": "cca173be1c70b68f7852b7aaf8a27f93",
+        "pk_posts_with_like": [],
+        "pk_posts_in_bookmarks": [],
         "pk": 1
-    },
-    {
-        "user_md5": "5bb592bdb3d6a038fa676af4478ed040",
-        "pk_posts_with_like": [
-            8,
-            1,
-            2,
-            4
-        ],
-        "pk_posts_in_bookmarks": [
-            2,
-            4
-        ],
-        "pk": 2
     }
 ]

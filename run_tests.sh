@@ -1,1 +1,1 @@
-pytest
+coverage run -m pytest
