@@ -8,7 +8,6 @@ from app.exceptions import BaseAppException
 from app.paths import DATA_JSON_PATH, COMMENTS_JSON_PATH, USERS_JSON_PATH
 from app.logger import logger
 
-
 post_blueprint = Blueprint('post_blueprint', __name__, template_folder='templates')
 
 
@@ -58,24 +57,12 @@ def post_page(post_id: int):
                                likes_list=likes_list, bookmarks_list=bookmarks_list)
 
 
-@post_blueprint.route('/posts/<int:post_id>/<string:like>/', methods=['POST'])
-def get_like(post_id: int, like: str):
-    user = UserDetect(request.headers, request.remote_addr, USERS_JSON_PATH)
-    user.add_new_user()
-    user.get_like(post_id, like)
-
-    posts = Post(DATA_JSON_PATH, COMMENTS_JSON_PATH)
-    posts.update_likes_post(post_id, like)
-    return redirect(request.referrer)
-
-
-@post_blueprint.route('/posts/bookmarks', methods=['GET', 'POST'])
+@post_blueprint.route('/posts/bookmarks/', methods=['GET', 'POST'])
 def bookmark_page():
     user = UserDetect(request.headers, request.remote_addr, USERS_JSON_PATH)
     user.add_new_user()
 
     posts = Post(DATA_JSON_PATH, COMMENTS_JSON_PATH)
-    user = UserDetect(request.headers, request.remote_addr, USERS_JSON_PATH)
     bookmarks_list = user.get_bookmarks_list()
     bookmark_posts: list[dict] = posts.get_bookmark_posts(bookmarks_list)
 
@@ -86,12 +73,12 @@ def bookmark_page():
                            likes_list=likes_list, bookmarks_list=bookmarks_list)
 
 
-@post_blueprint.route('/posts/<string:bookmark>/<int:post_id>/', methods=['POST'])
-def get_bookmark(bookmark: str, post_id: int):
+@post_blueprint.route('/posts/bookmark/<int:post_id>/', methods=['POST'])
+def get_bookmark(post_id: int):
     user = UserDetect(request.headers, request.remote_addr, USERS_JSON_PATH)
     user.add_new_user()
-    user.get_bookmark(post_id, bookmark)
-    return redirect(url_for('post_blueprint.page_index'), code=302)
+    user.get_bookmark(post_id)
+    return redirect(url_for('post_blueprint.bookmark_page'), code=302)
 
 
 @post_blueprint.route('/search/', methods=['GET'])
@@ -137,20 +124,20 @@ def user_posts_page(username: str):
 
 @post_blueprint.route('/api/posts', methods=['GET'])
 def api_get_all_posts_page():
-    logger.info(f'Запрос /api/posts/')
+    logger.info('Запрос /api/posts/')
     posts = Post(DATA_JSON_PATH, COMMENTS_JSON_PATH)
     all_posts: list[dict] = posts.get_all_posts()
     return jsonify(all_posts)
 
 
-@post_blueprint.route('/api/posts/<int:post_id>', methods=['GET'])
+@post_blueprint.route('/api/posts/<int:post_id>/', methods=['GET'])
 def api_get_post_page(post_id: int):
     logger.info(f'Запрос /api/posts/{post_id}')
     posts = Post(DATA_JSON_PATH, COMMENTS_JSON_PATH)
     return jsonify(posts.get_post_for_pk(post_id))
 
 
-@post_blueprint.route('/tag/<string:tag_name>', methods=['GET'])
+@post_blueprint.route('/tag/<string:tag_name>/', methods=['GET'])
 def search_hashtag(tag_name: str):
     user = UserDetect(request.headers, request.remote_addr, USERS_JSON_PATH)
     user.add_new_user()
@@ -176,3 +163,29 @@ def search_hashtag(tag_name: str):
 @post_blueprint.app_errorhandler(BaseAppException)
 def base_error_handler(e: BaseAppException):
     return jsonify({'error': e.message}), e.code
+
+
+@post_blueprint.route('/posts/like_bookmark/', methods=['POST'])
+def get_like_and_bookmark():
+    data = request.get_data().decode('utf-8').split('&')
+    post_id = int(data[0].replace('post_id=', ''))
+    method = ['like' if 'like' in data[1] else 'bookmark' if 'bookmark' in data[1] else ''][0]
+    user = UserDetect(request.headers, request.remote_addr, USERS_JSON_PATH)
+    user.add_new_user()
+    posts = Post(DATA_JSON_PATH, COMMENTS_JSON_PATH)
+    status = ''
+    likes_count = posts.update_likes_post(post_id)
+    bookmarks_list = user.get_bookmarks_list()
+    if method == 'bookmark':
+        status = user.get_bookmark(post_id)
+        bookmarks_list = user.get_bookmarks_list()
+    elif method == 'like':
+        status = user.get_like(post_id)
+        if status:
+            likes_count = posts.update_likes_post(post_id, 'like')
+        else:
+            likes_count = posts.update_likes_post(post_id, 'dislike')
+    return jsonify({'status': status,
+                    'bookmark_list': len(bookmarks_list),
+                    'likes_count': likes_count,
+                    })

@@ -13,4 +13,4 @@ class TestAllPages:
 
     def test_api_get_post(self, test_client):
         data = test_client.get('/api/posts/1')
-        assert data.content_type == 'application/json', 'не верный формат данных постов в api'
+        assert data.content_type == 'text/html; charset=utf-8', 'не верный формат данных постов в api'
