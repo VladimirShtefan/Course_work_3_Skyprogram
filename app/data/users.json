@@ -4,5 +4,14 @@
         "pk_posts_with_like": [],
         "pk_posts_in_bookmarks": [],
         "pk": 1
+    },
+    {
+        "user_md5": "e7a1aae68b631d98b1472ea4fcedd93c",
+        "pk_posts_with_like": [],
+        "pk_posts_in_bookmarks": [
+            1,
+            2
+        ],
+        "pk": 2
     }
 ]
